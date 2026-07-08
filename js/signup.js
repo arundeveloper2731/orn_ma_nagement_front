@@ -1,4 +1,4 @@
-const API = "https://ornmanagement-production-c695.up.railway.app";
+const API = "https://ornmanagement-production-c695.up.railway.app/api";
 
 document.addEventListener("DOMContentLoaded", () => {
     const signupform = document.getElementById("signupform");
