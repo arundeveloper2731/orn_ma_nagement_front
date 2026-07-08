@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+    <div id="login-page">
+        <div class="container">
+            <div class="login-logo">
+                 <div class="brand">Air<span>Fiber</span></div>
+                <p>ORN Management System</p>
+            </div>
+       <div>
+            <form  id="loginform">
+                <div class="input-group">
+                    <label for="">UserName</label>
+                    <input type="text" id="username" name="username" placeholder="enter username" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="">Password</label>
+                    <input type="password" name="password" id="password" placeholder="password">
+                </div>
+
+                <button type="submit" class="btn btn-primary" >Login</button>
+            </form>
+
+       </div>
+        
+
+        <p>New User? 
+            <a href="signup.html"><span>Create Account </span></a>
+        </p>
+    </div>
+
+    <div id="loginError" style="color:red; display:none;">
+            Invalid Username or Password
+        </div>
+
+        <div id="logoutMessage" style="color:green; display:none;">
+            Logged out successfully
+        </div>
+
+    </div>
+    <script src="./js/config.js"></script>
+    <script src="./js/login.js"></script>
+    
+</body>
+</html>
