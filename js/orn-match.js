@@ -2,7 +2,7 @@ function toggleMenu() {
     document.querySelector(".sidebar")
         .classList.toggle("active");
 }
-const API = "https://ornmanagement-production-c695.up.railway.app/api";
+const API = "https://ornmanagement-production-c695.up.railway.app";
 
 function logout() {
     fetch(`${API}/logout`, { method: "POST", credentials: "include" })

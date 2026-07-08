@@ -3,7 +3,7 @@ function toggleMenu(){
             .classList.toggle("active");
 }
 
-const API = "https://ornmanagement-production-c695.up.railway.app/api";
+const API = "https://ornmanagement-production-c695.up.railway.app";
 
 
 function logout() {

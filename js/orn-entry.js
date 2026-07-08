@@ -5,7 +5,7 @@ function toggleMenu1() {
     document.querySelector(".sidebar").classList.toggle("active");
 }
 
-const API = "https://ornmanagement-production-c695.up.railway.app/api";
+const API = "https://ornmanagement-production-c695.up.railway.app";
 
 // ==========================
 // Logout
