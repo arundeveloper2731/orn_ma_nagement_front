@@ -1,8 +1,12 @@
+const API = "https://ornmanagement-production-c695.up.railway.app";
+
+
 document.addEventListener("DOMContentLoaded", () => {
     const loginform = document.getElementById("loginform");
     const errorBox = document.getElementById("loginError");
     const logoutBox = document.getElementById("logoutMessage");
 
+    
     // Show a "logged out" message if we were redirected here after logout
     const params = new URLSearchParams(window.location.search);
     if (params.has("logout") && logoutBox) {
