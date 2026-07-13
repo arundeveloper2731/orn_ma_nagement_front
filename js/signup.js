@@ -1,5 +1,4 @@
-const API = "https://ornmanagement-production-c695.up.railway.app";
-
+const API = "http://localhost:8080";
 document.addEventListener("DOMContentLoaded", () => {
     const signupform = document.getElementById("signupform");
 

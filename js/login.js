@@ -1,59 +1,77 @@
-const API = "https://ornmanagement-production-c695.up.railway.app/";
-
+const API = "http://localhost:8080";
 
 document.addEventListener("DOMContentLoaded", () => {
-    const loginform = document.getElementById("loginform");
+
+    const loginForm = document.getElementById("loginform");
     const errorBox = document.getElementById("loginError");
-    const logoutBox = document.getElementById("logoutMessage");
 
-    
-    // Show a "logged out" message if we were redirected here after logout
-    const params = new URLSearchParams(window.location.search);
-    if (params.has("logout") && logoutBox) {
-        logoutBox.style.display = "block";
-    }
+    loginForm.addEventListener("submit", async (event) => {
 
-    loginform.addEventListener("submit", async (event) => {
         event.preventDefault();
 
         const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value;
+        const password = document.getElementById("password").value.trim();
 
-        if (errorBox) errorBox.style.display = "none";
-
-        if (username === "") {
-            alert("Enter username");
+        if (!username) {
+            alert("Please enter your username");
             return;
         }
-        if (password === "") {
-            alert("Enter password");
+
+        if (!password) {
+            alert("Please enter your password");
             return;
+        }
+
+        if (errorBox) {
+            errorBox.style.display = "none";
         }
 
         try {
-            const body = new URLSearchParams();
-            body.append("username", username);
-            body.append("password", password);
 
-            const response = await fetch(`${API}/login`, {
+            const response = await fetch(`${API}/api/auth/login`, {
+
                 method: "POST",
-                credentials: "include",
+
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/json"
                 },
-                body: body
+
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+
             });
 
             if (response.ok) {
+
+                alert("Login Successful");
+
+                localStorage.setItem("loggedInUser", username);
+
                 window.location.href = "dashboard.html";
-            } else if (errorBox) {
-                errorBox.style.display = "block";
+
             } else {
-                alert("Invalid username or password");
+
+                const message = await response.text();
+
+                if (errorBox) {
+                    errorBox.innerText = message;
+                    errorBox.style.display = "block";
+                } else {
+                    alert(message);
+                }
+
             }
-        } catch (err) {
-            console.error(err);
-            alert("Server error. Please try again.");
+
+        } catch (error) {
+
+            console.error("Login Error:", error);
+
+            alert("Unable to connect to the server.");
+
         }
+
     });
+
 });
