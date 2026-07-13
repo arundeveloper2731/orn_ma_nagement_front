@@ -1,7 +1,8 @@
 function toggleMenu() {
     document.querySelector(".sidebar").classList.toggle("active");
 }
-const API = "http://localhost:8080";
+const API = "https://orn-ma-nagement.onrender.com";
+
 function logout() {
     fetch(`${API}/logout`, { method: "POST", credentials: "include" })
         .finally(() => {
