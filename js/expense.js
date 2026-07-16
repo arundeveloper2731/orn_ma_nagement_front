@@ -60,9 +60,9 @@ console.log(description);
 
             method: "POST",
 
-            headers: {
+            headers: authHeaders({
                 "Content-Type": "application/json"
-            },
+            }),
 
             body: JSON.stringify(expense)
 
@@ -75,9 +75,9 @@ console.log(description);
 
             method: "PUT",
 
-            headers: {
+            headers: authHeaders({
                 "Content-Type": "application/json"
-            },
+            }),
 
             body: JSON.stringify(expense)
 
@@ -97,7 +97,7 @@ console.log(description);
 // Load table
 async function loadExpenses() {
 
-    const response = await fetch(API_URL, { credentials: "include" });
+    const response = await fetch(API_URL, { credentials: "include", headers: authHeaders() });
 
     const expenses = await response.json();
 
@@ -152,7 +152,8 @@ async function deleteExpense(id){
     await fetch(API_URL+"/"+id,{
     credentials: "include",
 
-        method:"DELETE"
+        method:"DELETE",
+        headers: authHeaders()
 
     });
 
@@ -165,7 +166,7 @@ async function deleteExpense(id){
 
 async function editExpense(id){
 
-    const response = await fetch(API_URL+"/"+id, { credentials: "include" });
+    const response = await fetch(API_URL+"/"+id, { credentials: "include", headers: authHeaders() });
 
     const expense = await response.json();
 

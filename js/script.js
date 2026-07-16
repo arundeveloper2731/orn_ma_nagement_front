@@ -7,6 +7,7 @@ function logout() {
     fetch(`${API}/logout`, { method: "POST", credentials: "include" })
         .finally(() => {
             localStorage.removeItem("loggedInUser");
+            clearToken();
             window.location.href = "login.html";
         });
 }
@@ -21,7 +22,7 @@ window.onload = function () {
 
 async function loadDashboard() {
     try {
-        const response = await fetch(`${API}/api/index`, { credentials: "include" });
+        const response = await fetch(`${API}/api/index`, { credentials: "include", headers: authHeaders() });
         if (!response.ok) {
             throw new Error("API Error");
         }

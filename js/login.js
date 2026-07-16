@@ -45,9 +45,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (response.ok) {
 
+                const data = await response.json();
+
                 alert("Login Successful");
 
                 localStorage.setItem("loggedInUser", username);
+                if (data && data.token) {
+                    setToken(data.token);
+                }
 
                 window.location.href = "dashboard.html";
 

@@ -33,7 +33,7 @@ async function loadSummary() {
 
     try {
 
-        const response = await fetch(`${API}/api/reports/summary`, { credentials: "include" });
+        const response = await fetch(`${API}/api/reports/summary`, { credentials: "include", headers: authHeaders() });
 
         if (!response.ok)
             throw new Error("Unable to load summary");
@@ -69,7 +69,7 @@ async function loadReports() {
             url += "status=" + status.value + "&";
 
 
-        const response = await fetch(url, { credentials: "include" });
+        const response = await fetch(url, { credentials: "include", headers: authHeaders() });
 
         if (!response.ok)
             throw new Error("Failed to load report");
@@ -120,27 +120,9 @@ searchBtn.addEventListener("click", () => {
 
 });
 
-exportExcelBtn.addEventListener("click", () => {
+exportExcelBtn.addEventListener("click", async () => {
 
-    let url = "/api/reports/export/excel?";
-
-    if (fromDate.value)
-        url += "from=" + fromDate.value + "&";
-
-    if (toDate.value)
-        url += "to=" + toDate.value + "&";
-
-    if (status.value !== "All")
-        url += "status=" + status.value + "&";
-
-
-    window.location.href = url;
-
-});
-
-exportPdfBtn.addEventListener("click", () => {
-
-    let url = "/api/reports/export/pdf?";
+    let url = `${API}/api/reports/export/excel?`;
 
     if (fromDate.value)
         url += "from=" + fromDate.value + "&";
@@ -151,10 +133,63 @@ exportPdfBtn.addEventListener("click", () => {
     if (status.value !== "All")
         url += "status=" + status.value + "&";
 
-
-    window.location.href = url;
+    await downloadWithAuth(url, "report.xlsx");
 
 });
+
+exportPdfBtn.addEventListener("click", async () => {
+
+    let url = `${API}/api/reports/export/pdf?`;
+
+    if (fromDate.value)
+        url += "from=" + fromDate.value + "&";
+
+    if (toDate.value)
+        url += "to=" + toDate.value + "&";
+
+    if (status.value !== "All")
+        url += "status=" + status.value + "&";
+
+    await downloadWithAuth(url, "report.pdf");
+
+});
+
+// Protected export endpoints require the Authorization header, which a plain
+// browser navigation (window.location.href) cannot send. Fetch the file with
+// the JWT attached instead, then trigger the download from the blob.
+async function downloadWithAuth(url, fallbackFileName) {
+
+    try {
+
+        const response = await fetch(url, { credentials: "include", headers: authHeaders() });
+
+        if (!response.ok) {
+            throw new Error("Export failed");
+        }
+
+        const disposition = response.headers.get("Content-Disposition") || "";
+        const match = disposition.match(/filename="?([^"]+)"?/);
+        const fileName = match ? match[1] : fallbackFileName;
+
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(blobUrl);
+
+    } catch (err) {
+
+        console.error(err);
+        alert("Unable to export report");
+
+    }
+
+}
 
 window.onload = () => {
 

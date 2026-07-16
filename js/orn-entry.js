@@ -53,9 +53,9 @@ async function saveOrn() {
 
         method:method,
 
-        headers:{
+        headers:authHeaders({
         "Content-Type":"application/json"
-        },
+        }),
 
         body:JSON.stringify(ornData)
 
@@ -64,11 +64,16 @@ async function saveOrn() {
         const response = await fetch(`${API}/api/orn`, {
             credentials: "include",
             method: "POST",
-            headers: {
+            headers: authHeaders({
                 "Content-Type": "application/json"
-            },
+            }),
             body: JSON.stringify(ornData)
         });
+
+        if (response.status === 403) {
+            alert("You do not have permission to modify this ORN record.");
+            return;
+        }
 
         if (!response.ok) {
             throw new Error("Failed to save ORN");
@@ -97,12 +102,23 @@ const ok=confirm("Delete this ORN ?");
 
 if(!ok) return;
 
-await fetch(`${API}/api/orn/`+id,{
+const response = await fetch(`${API}/api/orn/`+id,{
     credentials: "include",
 
-method:"DELETE"
+method:"DELETE",
+headers: authHeaders()
 
 });
+
+if (response.status === 403) {
+    alert("You do not have permission to delete this record.");
+    return;
+}
+
+if (!response.ok) {
+    alert("Unable to delete ORN");
+    return;
+}
 
 loadOrnTable();
 
@@ -122,7 +138,7 @@ async function loadOrnTable() {
 
     try {
 
-        const response = await fetch(`${API}/api/orn`, { credentials: "include" });
+        const response = await fetch(`${API}/api/orn`, { credentials: "include", headers: authHeaders() });
 
         if (!response.ok) {
             throw new Error("Failed to fetch ORNs");
@@ -165,6 +181,21 @@ function displayTable(list) {
 
     list.forEach(orn => {
 
+        // UI-only check: hide Edit/Delete for records that aren't the
+        // current user's (ADMIN always sees them). The backend independently
+        // enforces this on every PUT/DELETE regardless of what the UI shows.
+        const currentUser = getCurrentUser();
+        const canModify = isCurrentUserAdmin() || orn.createdBy === currentUser.username;
+
+        const actionButtons = canModify
+            ? `<button class="edit-btn" onclick="editOrn(${orn.id})">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="delete-btn" onclick="deleteOrn(${orn.id})">
+                    <i class="fa-solid fa-trash"></i>
+                </button>`
+            : "";
+
         tbody.innerHTML += `
             <tr>
                 <td>${orn.ornNo}</td>
@@ -177,19 +208,7 @@ function displayTable(list) {
 
                  <td>
 
-            <button class="edit-btn"
-                onclick="editOrn(${orn.id})">
-
-                <i class="fa-solid fa-pen"></i>
-
-            </button>
-
-            <button class="delete-btn"
-                onclick="deleteOrn(${orn.id})">
-
-                <i class="fa-solid fa-trash"></i>
-
-            </button>
+            ${actionButtons}
 
         </td>
 
@@ -205,7 +224,7 @@ let editingId=null;
 
 async function editOrn(id){
 
-    const response=await fetch(`${API}/api/orn/`+id, { credentials: "include" });
+    const response=await fetch(`${API}/api/orn/`+id, { credentials: "include", headers: authHeaders() });
 
     const orn=await response.json();
 
@@ -256,7 +275,7 @@ async function applyFilter() {
         if (toDate) params.append("toDate", toDate);
         if (status) params.append("status", status);
 
-        const response = await fetch(`${API}/api/orn/filter?${params.toString()}`, { credentials: "include" });
+        const response = await fetch(`${API}/api/orn/filter?${params.toString()}`, { credentials: "include", headers: authHeaders() });
 
         if (!response.ok) {
             throw new Error("Filter request failed");

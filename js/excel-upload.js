@@ -142,6 +142,7 @@ async function uploadFile() {
         const response = await fetch(`${API}/api/excel/upload`, {
             method: "POST",
             credentials: "include",
+            headers: authHeaders(),
             body: formData
         });
 
@@ -171,7 +172,7 @@ async function uploadFile() {
 async function loadUploadedFiles() {
 
     try {
-        const response = await fetch(`${API}/api/excel/files`, { credentials: "include" });
+        const response = await fetch(`${API}/api/excel/files`, { credentials: "include", headers: authHeaders() });
 
         if (!response.ok) {
             throw new Error("Failed to load uploaded files");
@@ -238,7 +239,7 @@ function renderFileList(fileSummaries) {
 async function loadFileData(fileName) {
 
     try {
-        const response = await fetch(`${API}/api/excel/by-file?fileName=${encodeURIComponent(fileName)}`, { credentials: "include" });
+        const response = await fetch(`${API}/api/excel/by-file?fileName=${encodeURIComponent(fileName)}`, { credentials: "include", headers: authHeaders() });
 
         if (!response.ok) {
             throw new Error("Failed to load file data");
@@ -298,7 +299,8 @@ async function deleteFile(fileName) {
     try {
         const response = await fetch(`${API}/api/excel/delete-file?fileName=${encodeURIComponent(fileName)}`, {
             method: "DELETE",
-            credentials: "include"
+            credentials: "include",
+            headers: authHeaders()
         });
 
         if (!response.ok) {
@@ -327,7 +329,8 @@ async function deleteRecord(id, fileName) {
     try {
         const response = await fetch(`${API}/api/excel/delete/${id}`, {
             method: "DELETE",
-            credentials: "include"
+            credentials: "include",
+            headers: authHeaders()
         });
 
         if (!response.ok) {
@@ -426,7 +429,7 @@ saveEditBtn.addEventListener("click", async () => {
         const response = await fetch(`${API}/api/excel/update/${currentEditId}`, {
             method: "PUT",
             credentials: "include",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify(payload)
         });
 

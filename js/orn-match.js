@@ -59,7 +59,7 @@ async function loadExcelFileOptions() {
 
     try {
 
-        const response = await fetch(`${API}/api/excel/files`, { credentials: "include" });
+        const response = await fetch(`${API}/api/excel/files`, { credentials: "include", headers: authHeaders() });
 
         if (!response.ok) return;
 
@@ -86,7 +86,7 @@ async function loadManualOrnOptions() {
 
     try {
 
-        const response = await fetch(`${API}/api/orn`, { credentials: "include" });
+        const response = await fetch(`${API}/api/orn`, { credentials: "include", headers: authHeaders() });
 
         if (!response.ok) return;
 
@@ -131,7 +131,7 @@ async function runMatching() {
         const response = await fetch(
             `${API}/api/matching/run?fileName=` + encodeURIComponent(fileName) +
             "&manualOrn=" + encodeURIComponent(manualOrn),
-            { method: "POST", credentials: "include" }
+            { method: "POST", credentials: "include", headers: authHeaders() }
         );
 
         if (!response.ok) {
@@ -305,7 +305,7 @@ async function viewDetails(orn) {
         const response = await fetch(
             `${API}/api/matching/details/` + encodeURIComponent(orn) +
             "?fileName=" + encodeURIComponent(fileName),
-            { credentials: "include" }
+            { credentials: "include", headers: authHeaders() }
         );
 
         const data = await response.json();
